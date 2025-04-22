@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 
 function Login() {
   const navigate = useNavigate();
@@ -10,20 +11,21 @@ function Login() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
-
+  
     try {
-      const response = await fetch('http://localhost:5000/api/login', {
+      const response = await fetch('http://localhost:5001/api/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        credentials: 'include', // this allows sending cookies
+        credentials: 'include',
         body: JSON.stringify({ email, password }),
       });
-
+  
       const data = await response.json();
-
+  
       if (response.ok) {
-        // You can store token here if returned (e.g., localStorage.setItem)
-        navigate('/main');
+        console.log('gerai pimpalas')
+        localStorage.setItem("username", data.username); 
+        navigate('/dashboard');
       } else {
         setError(data.message || 'Login failed');
       }
@@ -32,6 +34,7 @@ function Login() {
       setError('An error occurred while logging in');
     }
   };
+  
 
   return (
     <div>
@@ -52,6 +55,7 @@ function Login() {
         <button type="submit">Login</button>
       </form>
       {error && <p style={{color: 'red'}}>{error}</p>}
+      <p>Don't have an account? <Link to="/register">Register here</Link></p>
     </div>
   );
 }

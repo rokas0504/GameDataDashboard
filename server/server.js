@@ -3,16 +3,22 @@ const express = require('express');
 const mongoose = require('mongoose');
 const jwt = require('jsonwebtoken');
 const User = require('./models/users');
+const cors = require('cors');
 
 const app = express();
 app.use(express.json());
 
 const dbURI = process.env.dbURI;
 
+app.use(cors({
+  origin: 'http://localhost:3000',
+  credentials: true,
+}));
+
 mongoose.connect(dbURI, { useNewUrlParser: true, useUnifiedTopology: true })
   .then(() => {
-    app.listen(5000);
-    console.log('Server is running on port 5000');
+    app.listen(5001);
+    console.log('Server is running on port 5001');
   })
   .catch(err => console.log(err));
 
@@ -27,7 +33,7 @@ app.get('/posts', authenticateToken, (req, res) => {
 });
 
 // Don't protect login
-app.post('/login', (req, res) => {
+app.post('/api/login', (req, res) => {
   console.log("Body received:", req.body);
   
   const email = req.body.email;
@@ -60,7 +66,7 @@ User.findOne({ email: email })
 //   res.json({ accessToken });
 });
 
-app.post('/register', (req, res) => {
+app.post('/api/register', (req, res) => {
     console.log("Body received:", req.body);
     
     const username = req.body.username;
@@ -71,10 +77,10 @@ app.post('/register', (req, res) => {
       return res.status(400).json({ error: 'Username, passa nd email are required' });
     }
 
-    user = new User({
-      username: username,
-      email: email,
-      password: password
+    const user = new User({
+      username,
+      email,
+      password
     });
     user.save()
       .then(() => {
