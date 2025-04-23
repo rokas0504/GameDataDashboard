@@ -171,6 +171,7 @@ app.delete('/api/wishlist', authenticateToken, (req, res) => {
 
 app.get('/api/wishlist', authenticateToken, (req, res) => {
   const userId = req.user.id; 
+  console.log("Fetching wishlist for userId:", userId);
 
   Wishlist.find({ userId: userId })
     .then(wishlistItems => {
