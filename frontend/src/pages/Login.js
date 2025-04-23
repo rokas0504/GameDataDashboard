@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { Link } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
+import { loginUser } from '../api/auth';
 
 function Login() {
   const navigate = useNavigate();
@@ -10,31 +10,17 @@ function Login() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setError('');
-  
+
     try {
-      const response = await fetch('http://localhost:5001/api/login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        credentials: 'include',
-        body: JSON.stringify({ email, password }),
-      });
-  
-      const data = await response.json();
-  
-      if (response.ok) {
-        console.log('gerai pimpalas')
-        localStorage.setItem("username", data.username); 
-        navigate('/dashboard');
-      } else {
-        setError(data.message || 'Login failed');
-      }
+      const data = await loginUser(email, password);
+      localStorage.setItem("username", data.username);
+      localStorage.setItem("token", data.token);
+      navigate('/dashboard');
     } catch (err) {
       console.error(err);
-      setError('An error occurred while logging in');
+      setError(err.message);
     }
   };
-  
 
   return (
     <div>
