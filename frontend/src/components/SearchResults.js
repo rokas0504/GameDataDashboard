@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from "react";
 import "./SearchResults.css";
 import { submitRating, getAverageRating } from "../api/wishlistApi";
+import { fetchGameDeals } from "../api/priceComparison";
 
 function SearchResults({ results, wishlist, onAddToWishlist }) {
   const [ratings, setRatings] = useState({});
   const [userRatings, setUserRatings] = useState({});
+  const [prices, setPrices] = useState({});
 
   const token = localStorage.getItem("token");
 
@@ -15,6 +17,14 @@ function SearchResults({ results, wishlist, onAddToWishlist }) {
           ...prev,
           [game.id]: data.averageRating || 0,
         }));
+      });
+      fetchGameDeals(game.name).then((priceData) => {
+        if (priceData) {
+          setPrices((prev) => ({
+            ...prev,
+            [game.id]: priceData.price || "N/A",
+          }));
+        }
       });
     });
   }, [results, token]);
@@ -42,7 +52,6 @@ function SearchResults({ results, wishlist, onAddToWishlist }) {
   const isInWishlist = (gameId) => {
     return wishlist.some((item) => String(item.id) === String(gameId));
   };
-  
 
   return (
     <div>
@@ -53,19 +62,19 @@ function SearchResults({ results, wishlist, onAddToWishlist }) {
             <strong>{game.name}</strong>
             <p>{game.released}</p>
             <img src={game.background_image} alt={game.name} width="200" />
-
+            <p>Price: ${prices[game.id] || "Loading..."}</p>
             <button
               onClick={() => onAddToWishlist(game.id)}
               disabled={isInWishlist(game.id)}
               className={isInWishlist(game.id) ? "disabled-button" : "active-button"}
             >
               {isInWishlist(game.id)
-                ? "In Wishlist"
-                : "Add to Wishlist"}
+                ? " In Wishlist"
+                : " Add to Wishlist"}
             </button>
 
             <div>
-              <p>Average Rating: {ratings[game.id] || "Loading..."}</p>
+              <p> Average Rating: {ratings[game.id] || "No ratings..."}</p>
               <input
                 type="number"
                 min="1"
