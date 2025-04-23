@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 
 
 const Wishlists = new mongoose.Schema({
-    userId: { type: String, required: true }, 
+  userId: { type: String, required: true }, 
   gameId: { type: String, required: true }, 
 }, { timestamps: true }); 
 

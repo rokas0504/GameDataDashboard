@@ -24,11 +24,18 @@ app.use(cors({
   credentials: true,
 }));
 
+// mongoose.connect(dbURI, { useNewUrlParser: true, useUnifiedTopology: true })
+//   .then(() => {
+//     https.createServer(credentials, app).listen(5001, () => {
+//       console.log('HTTPS server is running on port 5001');
+//   });
+//   })
+//   .catch(err => console.log(err));
 mongoose.connect(dbURI, { useNewUrlParser: true, useUnifiedTopology: true })
   .then(() => {
-    https.createServer(credentials, app).listen(5001, () => {
-      console.log('HTTPS server is running on port 5001');
-  });
+    app.listen(5001, () => {
+      console.log('Server is running on port 5001');
+    });
   })
   .catch(err => console.log(err));
 
@@ -83,6 +90,15 @@ app.post('/api/register', async (req, res) => {
     if (!username || !email || !password) {
       return res.status(400).json({ error: 'Username, passa nd email are required' });
     }
+
+    const existingUser = await User.findOne({
+      $or: [{ email: email }, { username: username }]
+    });
+
+    if (existingUser) {
+      return res.status(409).json({ error: 'Email or username already in use' });
+    }
+    
     const hashedPassword = await bcrypt.hash(password, 10);
     const user = new User({
       username: username,
