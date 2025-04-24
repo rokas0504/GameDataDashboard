@@ -1,4 +1,4 @@
-const API_URL = 'http://localhost:5001/api';
+const API_URL = 'https://localhost:5001/api';
 
 export async function loginUser(email, password) {
   const response = await fetch(`${API_URL}/login`, {
@@ -17,7 +17,7 @@ export async function loginUser(email, password) {
 
 export async function registerUser(formData) {
     try {
-      const res = await fetch("http://localhost:5001/api/register", {
+      const res = await fetch("https://localhost:5001/api/register", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

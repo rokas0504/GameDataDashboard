@@ -1,7 +1,7 @@
 const RAWG_API_KEY = process.env.REACT_APP_RAWG_API_KEY;
 
 export const fetchWishlist = async (token) => {
-  const res = await fetch("http://localhost:5001/api/wishlist", {
+  const res = await fetch("https://localhost:5001/api/wishlist", {
     headers: {
       Authorization: `Bearer ${token}`,
     },
@@ -34,7 +34,7 @@ export const fetchDetailedWishlist = async (token) => {
 };
 
 export const addToWishlist = async (token, gameId) => {
-  const res = await fetch("http://localhost:5001/api/wishlist", {
+  const res = await fetch("https://localhost:5001/api/wishlist", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -47,7 +47,7 @@ export const addToWishlist = async (token, gameId) => {
 };
 
 export async function submitRating(token, gameId, rating) {
-  const res = await fetch("http://localhost:5001/api/rate", {
+  const res = await fetch("https://localhost:5001/api/rate", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -59,7 +59,7 @@ export async function submitRating(token, gameId, rating) {
 }
 
 export async function getAverageRating(token, gameId) {
-  const res = await fetch(`http://localhost:5001/api/ratings/${gameId}`, {
+  const res = await fetch(`https://localhost:5001/api/ratings/${gameId}`, {
     headers: {
       Authorization: `Bearer ${token}`,
     },
@@ -68,7 +68,7 @@ export async function getAverageRating(token, gameId) {
 }
 
 export const removeFromWishlist = async (token, gameId) => {
-  const res = await fetch("http://localhost:5001/api/wishlist", {
+  const res = await fetch("https://localhost:5001/api/wishlist", {
     method: "DELETE",
     headers: {
       "Content-Type": "application/json",

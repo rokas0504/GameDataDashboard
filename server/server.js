@@ -9,6 +9,7 @@ const cors = require('cors');
 const bcrypt = require('bcrypt');
 const fs = require('fs');
 const https = require('https');
+const validator = require('validator');
 
 const app = express();
 app.use(express.json());
@@ -24,23 +25,13 @@ app.use(cors({
   credentials: true,
 }));
 
-// mongoose.connect(dbURI, { useNewUrlParser: true, useUnifiedTopology: true })
-//   .then(() => {
-//     https.createServer(credentials, app).listen(5001, () => {
-//       console.log('HTTPS server is running on port 5001');
-//   });
-//   })
-//   .catch(err => console.log(err));
 mongoose.connect(dbURI, { useNewUrlParser: true, useUnifiedTopology: true })
   .then(() => {
-    app.listen(5001, () => {
-      console.log('Server is running on port 5001');
-    });
+    https.createServer(credentials, app).listen(5001, () => {
+      console.log('HTTPS server is running on port 5001');
+  });
   })
   .catch(err => console.log(err));
-
-
-const posts = []
 
 app.get('/posts',  (req, res) => {
   res.json(posts);
@@ -54,6 +45,10 @@ app.post('/api/login', async (req, res) => {
 
   if (!email || !password) {
     return res.status(400).json({ error: 'Email and password are required' });
+  }
+
+  if (!validator.isEmail(email)) {
+    return res.status(400).json({ error: 'Invalid email format' });
   }
 
   try {
@@ -91,6 +86,17 @@ app.post('/api/register', async (req, res) => {
       return res.status(400).json({ error: 'Username, passa nd email are required' });
     }
 
+    if (!validator.isEmail(email)) {
+      return res.status(400).json({ error: 'Invalid email format' });
+    }
+
+    if ( username.length > 50) {
+      return res.status(400).json({ error: 'Username must be shorter than 50 charachters' });
+    }
+    if ( password.length > 50) {
+      return res.status(400).json({ error: 'Password must be shorter than 50 charachters' });
+    }
+
     const existingUser = await User.findOne({
       $or: [{ email: email }, { username: username }]
     });
@@ -118,41 +124,52 @@ app.post('/api/register', async (req, res) => {
 
 app.post('/api/wishlist', authenticateToken, (req, res) => {
   const userId = req.user.id; 
-  const gameId = req.body.gameId;
+  const gameId = String(req.body.gameId);
     if (!gameId) {
         return res.status(400).json({ error: 'Game ID is required' });
     }
-Wishlist.findOne({ userId: userId, gameId: gameId })
+    if (typeof gameId !== 'string' || !gameId.trim()) {
+      return res.status(400).json({ error: 'Invalid game ID' });
+    }
+
+  Wishlist.findOne({ userId: userId, gameId: gameId })
     .then(existingItem => {
         if (existingItem) {
-            return res.status(400).json({ error: 'Game is already in wishlist' });
+            res.status(400).json({ error: 'Game is already in wishlist' });
+            return null;
         }
-    })
+        const wishlistItem = new Wishlist({
+          userId: userId,
+          gameId: gameId
+      });
+      wishlistItem.save()
+          .then(() => {
+              res.status(201).json({ message: 'Game added to wishlist' });
+          })
+          .catch(err => {
+              console.error(err);
+              res.status(500).json({ error: 'Internal server error' });
+          });
+    }
+  )
     .catch(err => {
         console.error(err);
         return res.status(500).json({ error: 'Internal server error' });
     });
 
-    const wishlistItem = new Wishlist({
-        userId: userId,
-        gameId: gameId
-    });
-    wishlistItem.save()
-        .then(() => {
-            res.status(201).json({ message: 'Game added to wishlist' });
-        })
-        .catch(err => {
-            console.error(err);
-            res.status(500).json({ error: 'Internal server error' });
-        });
+    
 }   );
 
 app.delete('/api/wishlist', authenticateToken, (req, res) => {
     const userId = req.user.id; 
-    const gameId = req.body.gameId; 
+    const gameId = String(req.body.gameId); 
   
     if (!gameId) {
       return res.status(400).json({ error: 'Game ID is required' });
+    }
+
+    if (typeof gameId !== 'string' || !gameId.trim()) {
+      return res.status(400).json({ error: 'Invalid game ID' });
     }
   
     // Find and delete the wishlist item based on userId and gameId
@@ -186,12 +203,16 @@ app.get('/api/wishlist', authenticateToken, (req, res) => {
 app.post('/api/rate', authenticateToken, (req, res) => {
 
   const userId = req.user.id; 
-    const gameId = req.body.gameId;
+    const gameId = String(req.body.gameId);
     const rating = Number(req.body.rating); 
     
     if (!gameId || !rating) {
         return res.status(400).json({ error: 'Game ID and rating are required' });
     }
+
+    if (typeof rating !== 'number' || isNaN(rating) || rating < 1 || rating > 10) {
+     return res.status(400).json({ error: 'Rating must be a number between 1 and 10' });
+}
     
     Ratings.findOne({ userId: userId, gameId: gameId })
     .then(existingItem => {
@@ -222,7 +243,13 @@ app.post('/api/rate', authenticateToken, (req, res) => {
     });
 
     app.get('/api/ratings/:gameId', authenticateToken, async (req, res) => {
-      const { gameId } = req.params;
+      const rawGameId = req.params.gameId;
+const gameId = String(rawGameId).trim();
+
+      if (!gameId || typeof gameId !== 'string') {
+        return res.status(400).json({ error: 'Invalid game ID' });
+      }
+      
       try {
         const ratings = await Ratings.find({ gameId });
     
@@ -252,9 +279,3 @@ function authenticateToken(req, res, next) {
   });
 }
 
-app.use((req, res, next) => {
-  if (req.headers['x-forwarded-proto'] !== 'https') {
-    return res.redirect(`https://${req.headers.host}${req.url}`);
-  }
-  next();
-});
