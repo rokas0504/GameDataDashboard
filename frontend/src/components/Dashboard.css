@@ -1,0 +1,45 @@
+/* Dashboard.css */
+
+.dashboard-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 1rem;
+  }
+  
+  .dashboard-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    margin-bottom: 1rem;
+  }
+  
+  .dashboard-header h2 {
+    margin: 0;
+  }
+  
+  .logout-button {
+    background-color: #e74c3c;
+    color: white;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    cursor: pointer;
+  }
+  
+  .logout-button:hover {
+    background-color: #c0392b;
+  }
+  
+  hr {
+    margin: 2rem 0;
+  }
+  
+  @media (max-width: 768px) {
+    .dashboard-header {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 0.5rem;
+    }
+  }
+  
