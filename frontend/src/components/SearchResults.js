@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import "./SearchResults.css";
-import { submitRating, getAverageRating } from "../api/wishlistApi";
+import { submitRating, getAverageRating } from "../api/api";
 import { fetchGameDeals } from "../api/priceComparison";
 
 function SearchResults({ results, wishlist, onAddToWishlist }) {

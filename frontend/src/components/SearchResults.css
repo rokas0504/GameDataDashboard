@@ -1,35 +1,42 @@
+/* SearchResults.css */
+
 .grid-container {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-    gap: 16px;
-  }
-  
-  .game-card {
-    border: 1px solid #ddd;
-    padding: 12px;
-    border-radius: 8px;
-    background-color: #fafafa;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    text-align: center;
-  }
-  
-  .active-button {
-    background-color: #4caf50;
-    color: white;
-    border: none;
-    padding: 6px 10px;
-    margin-top: 8px;
-    cursor: pointer;
-    border-radius: 4px;
-  }
-  
-  .disabled-button {
-    background-color: #cccccc;
-    color: white;
-    border: none;
-    padding: 6px 10px;
-    margin-top: 8px;
-    cursor: not-allowed;
-    border-radius: 4px;
-  }
-  
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1rem;
+  padding: 1rem;
+}
+
+.game-card {
+  background: #f9f9f9;
+  padding: 1rem;
+  border-radius: 12px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  text-align: center;
+}
+
+img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 8px;
+}
+
+.active-button,
+.disabled-button {
+  padding: 0.5rem 1rem;
+  margin: 0.5rem 0;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.active-button {
+  background-color: #4CAF50;
+  color: white;
+}
+
+.disabled-button {
+  background-color: gray;
+  color: white;
+  cursor: not-allowed;
+}

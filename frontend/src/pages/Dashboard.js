@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { fetchDetailedWishlist, addToWishlist } from "../api/wishlistApi";
+import { fetchDetailedWishlist, addToWishlist } from "../api/api";
 import { searchGames } from "../api/searchGames";
 import SearchBar from "../components/SearchBar";
 import SearchResults from "../components/SearchResults";
 import Wishlist from "../components/Wishlist";
-import { removeFromWishlist } from "../api/wishlistApi";
+import { removeFromWishlist } from "../api/api";
+import "../components/Dashboard.css"
 
 
 function Dashboard() {
@@ -81,18 +82,20 @@ function Dashboard() {
   };
   
   return (
-    <div>
-      <h2>Welcome, {username}!</h2>
-      <button onClick={handleLogout}>Logout</button>
-
+    <div className="dashboard-container">
+      <div className="dashboard-header">
+        <h2>Welcome, {username}!</h2>
+        <button className="logout-button" onClick={handleLogout}>Logout</button>
+      </div>
+  
       <hr />
-
+  
       <SearchBar
         searchTerm={searchTerm}
         setSearchTerm={setSearchTerm}
         onSearch={handleSearch}
       />
-
+  
       {searchResults.length > 0 && (
         <SearchResults
           results={searchResults}
@@ -100,13 +103,13 @@ function Dashboard() {
           onAddToWishlist={handleAddToWishlist}
         />
       )}
-
+  
       <hr />
-
+  
       <Wishlist wishlist={wishlist} onRemove={handleRemoveFromWishlist} />
-
     </div>
   );
+  
 }
 
 export default Dashboard;
