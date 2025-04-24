@@ -127,24 +127,26 @@ Wishlist.findOne({ userId: userId, gameId: gameId })
         if (existingItem) {
             return res.status(400).json({ error: 'Game is already in wishlist' });
         }
+
+        const wishlistItem = new Wishlist({
+          userId: userId,
+          gameId: gameId
+      });
+       wishlistItem.save()
+          .then(() => {
+              res.status(201).json({ message: 'Game added to wishlist' });
+          })
+          .catch(err => {
+              console.error(err);
+              res.status(500).json({ error: 'Internal server error' });
+          });
     })
     .catch(err => {
         console.error(err);
         return res.status(500).json({ error: 'Internal server error' });
     });
 
-    const wishlistItem = new Wishlist({
-        userId: userId,
-        gameId: gameId
-    });
-    wishlistItem.save()
-        .then(() => {
-            res.status(201).json({ message: 'Game added to wishlist' });
-        })
-        .catch(err => {
-            console.error(err);
-            res.status(500).json({ error: 'Internal server error' });
-        });
+    
 }   );
 
 app.delete('/api/wishlist', authenticateToken, (req, res) => {
