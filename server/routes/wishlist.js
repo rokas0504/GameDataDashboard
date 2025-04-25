@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const Wishlist = require('../models/wishlist');
-const authenticateToken = require('../middleware/authMiddleware');
+const authenticateToken = require('../middleware/auth');
 
 router.post('/wishlist', authenticateToken, (req, res) => {
   const userId = req.user.id; 
@@ -53,7 +53,6 @@ router.delete('/wishlist', authenticateToken, (req, res) => {
       return res.status(400).json({ error: 'Invalid game ID' });
     }
   
-    // Find and delete the wishlist item based on userId and gameId
     Wishlist.findOneAndDelete({ userId: userId, gameId })
       .then(deletedItem => {
         if (!deletedItem) {
