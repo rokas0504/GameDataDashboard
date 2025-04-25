@@ -61,7 +61,7 @@ function SearchResults({ results, wishlist, onAddToWishlist }) {
           <div className="game-card" key={game.id}>
             <strong>{game.name}</strong>
             <p>{game.released}</p>
-            <img src={game.background_image} alt={game.name} width="200" />
+            <img src={game.background_image} alt={game.name} width="90%" />
             <p>Price: ${prices[game.id] || "Loading..."}</p>
             <button
               onClick={() => onAddToWishlist(game.id)}
